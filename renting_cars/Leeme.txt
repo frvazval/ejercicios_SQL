@@ -1,0 +1,4 @@
+El archivo EER_Renting_Cars.mwb es el diagrama EER para abrirlo com MySQL Workbench.
+El archivo Captura_EER.png es una captura de imagen del diagrama EER.
+El archivo renying_cars.sql son las sentencias sql que he escrito yo para crear la BD.
+El archivo renting_cars_bd.sql es el archivo de la exportación de la BD con MySQL Workbench.
