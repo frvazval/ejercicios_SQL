@@ -96,11 +96,51 @@ begin
     if v_stock  < new.cantidad then
 		signal sqlstate "45000" set message_text = "No hay suficiente stock";
 	else
-		update productos set stock_actual = stock_actual - new.cantidad, ventas_producto = ventas_producto + new.cantidad;
+		update productos set stock_actual = stock_actual - new.cantidad, ventas_producto = ventas_producto + new.cantidad
+        where id_producto = new.id_producto;
 	end if;
 end //
 delimiter ;
 
+insert into facturas (id_cliente, id_producto, cantidad) values (1, 1, 1);
+insert into facturas (id_cliente, id_producto, cantidad) values (2, 2, 20);
 
+-- Procedimiento para vender un producto, si no esta el cliente lo añadimos
+-- Si el producto no lo tenemos, mostramos un mensaje de error
+-- La salida final sera nombre_cliente, apellido_cliente, nombre_producto, cantidad, precio y importe
+drop procedure if exists venta_producto;
+delimiter $$
+create procedure venta_producto (
+p_nombre_cliente varchar(50), 
+p_apellido_cliente varchar(50),
+p_nombre_producto varchar(50),
+p_cantidad int)
+begin
+	declare v_id_cliente int;
+    declare v_id_producto int ;
+    declare v_precio int;
+    
+    select id_cliente into v_id_cliente
+    from clientes where nombre_cliente = p_nombre_cliente and apellido_cliente = p_apellido_cliente;
+    
+    if v_id_cliente is null then
+		insert into clientes (nombre_cliente, apellido_cliente) values (p_nombre_cliente, p_apellido_cliente);   
+        select id_cliente into v_id_cliente
+        from clientes where nombre_cliente = p_nombre_cliente and apellido_cliente = p_apellido_cliente;
+    end if;
 
+	select id_producto into v_id_producto
+    from productos where nombre_producto = p_nombre_producto;
+    
+    if v_id_producto is null then
+		signal sqlstate "45000" set message_text = "No se puede comprar este producto porque no existe";
+    else
+		insert into facturas (id_cliente, id_producto, cantidad) values
+        (v_id_cliente, v_id_producto, p_cantidad);
+        select precio into v_precio from productos where id_producto = v_id_producto;
+        select concat_ws(" ", "cliente:", p_nombre_cliente, p_apellido_cliente, "Producto:", p_nombre_producto, "Cantidad:", p_cantidad, "Precio:", v_precio, "Importe:", p_cantidad * v_precio);
+    end if;	
+end $$
+delimiter ;
+call venta_producto ("Robin", "Hood", "Iphone 27", 2);
 
