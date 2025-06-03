@@ -151,10 +151,9 @@ where year(f.fecha_compra) = 2024;
 
 -- Funcion para que muestre los totales de compra de un año en concreto
 drop function if exists facturacion_anual;
-
 delimiter $$
 create function facturarion_anual (p_year_fact year)
-returns decimal(10,2)
+returns varchar(255)
 deterministic 
 begin
 	declare v_total decimal(10,2);    
@@ -163,7 +162,6 @@ begin
 	natural join productos p
 	where year(f.fecha_compra) = p_year_fact;
     
-    return ifnull(v_total, concat_ws(" ", "El año", p_year_fact, "no tiene facturación"),concat_ws(" ", "total Facturacion del año", p_year_fact, "=", v_total, "€"));    
-    
+    return ifnull(v_total, concat_ws(" ", "El año", p_year_fact, "no tiene facturación"),concat_ws(" ", "total Facturacion del año", p_year_fact, "=", v_total, "€"));      
 end $$
 delimiter ;
