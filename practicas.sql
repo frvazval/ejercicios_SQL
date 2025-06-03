@@ -162,6 +162,13 @@ begin
 	natural join productos p
 	where year(f.fecha_compra) = p_year_fact;
     
-    return ifnull(v_total, concat_ws(" ", "El año", p_year_fact, "no tiene facturación"),concat_ws(" ", "total Facturacion del año", p_year_fact, "=", v_total, "€"));      
+    if v_total is null then
+		return concat_ws(" ", "El año", p_year_fact, "no tiene facturación");
+	else
+		return concat_ws(" ", "total Facturacion del año", p_year_fact, "=", v_total, "€");
+    end if;
+        
 end $$
 delimiter ;
+
+select facturacion_anual(2023);
