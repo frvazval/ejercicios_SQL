@@ -24,6 +24,8 @@ apellido_cliente varchar(50) not null,
 id_pais int
 );
 
+insert into clientes (nombre_cliente,apellido_cliente) values ("Peter", "Parker"), ("Beyocé", "Pérez");
+
 create table paises (
 id_pais int auto_increment primary key,
 nombre_pais varchar(50)
@@ -80,7 +82,24 @@ call insertar_productos ("Iphone 27", 6000.75, 3, "Apple");
 call insertar_productos ("S35", 1000, 5, "Samsung");
 call insertar_productos ("S35", 1000, 3, "Samsung");
 
+-- Trigger para ventas de producto
+drop trigger if exists tr_verificar_stock;
 
+delimiter //
+create trigger tr_verificar_stock
+before insert on facturas
+for each row
+begin
+	declare v_stock int;
+    select stock_actual into v_stock from productos where id_producto = new.id_producto;
+    
+    if v_stock  < new.cantidad then
+		signal sqlstate "45000" set message_text = "No hay suficiente stock";
+	else
+		update productos set stock_actual = stock_actual - new.cantidad, ventas_producto = ventas_producto + new.cantidad;
+	end if;
+end //
+delimiter ;
 
 
 
