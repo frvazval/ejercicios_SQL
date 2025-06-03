@@ -61,7 +61,7 @@ begin
     select id_producto into v_id_producto from productos where nombre_producto = p_nombre_producto;
     
     if v_id_producto is null then
-    
+		
     else
     
     end if;
