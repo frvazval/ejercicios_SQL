@@ -152,7 +152,7 @@ where year(f.fecha_compra) = 2024;
 -- Funcion para que muestre los totales de compra de un año en concreto
 drop function if exists facturacion_anual;
 delimiter $$
-create function facturarion_anual (p_year_fact year)
+create function facturacion_anual (p_year_fact year)
 returns varchar(255)
 deterministic 
 begin
@@ -171,4 +171,5 @@ begin
 end $$
 delimiter ;
 
-select facturacion_anual(2023);
+select facturacion_anual(2025);
+
