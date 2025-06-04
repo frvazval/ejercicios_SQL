@@ -222,4 +222,18 @@ call insertar_productos_2("Mouse", 20, 4, "Logitech", @stock_producto_actualizad
 -- Mostrar el valor que tiene ahora la variable global
 select @stock_producto_actualizado;
 
+-- Necesitamos la información completa de la base de datos:
+-- Los clientes, que han comprado, cual es es stock de ese producto,
+-- la fecha de la factura y quien era el proveedor
+-- Pero no hay que poner los ids
+
+select c.nombre_cliente, c.apellido_cliente, pr.nombre_producto, pr.stock_actual, f.fecha_compra, p.nombre_proveedor from clientes c 
+left join facturas f
+on c.id_cliente = f.id_cliente
+left join productos pr
+on f.id_producto = pr.id_producto
+left join proveedores p 
+on pr.id_proveedor = p.id_proveedor; 
+
+
 
