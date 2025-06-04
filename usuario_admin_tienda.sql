@@ -8,3 +8,7 @@ insert into clientes (nombre_cliente, apellido_cliente) VALUE
 -- Crear una función a la cual le indicamos el id_pais
 -- y nos devolvera la cantidad de clientes de ese pais
 
+delimiter $$
+
+
+delimiter ;
