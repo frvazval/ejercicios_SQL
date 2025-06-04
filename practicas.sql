@@ -173,3 +173,51 @@ delimiter ;
 
 select facturacion_anual(2025);
 
+drop procedure if exists insertar_productos_2;
+delimiter $$
+create procedure insertar_productos_2 (
+in p_nombre_producto varchar(50), 
+in p_precio decimal (8,2),
+in p_stock int,
+in p_nombre_proveedor varchar(50),
+out p_stock_actualizado int)
+begin
+	-- con declare la variable es local, con @ es global
+    -- Variable para guardar el id_proveedor si existe
+	declare v_id_proveedor int;
+    declare v_id_producto int;
+    
+    select id_proveedor into v_id_proveedor
+    from proveedores where nombre_proveedor = p_nombre_proveedor;
+    
+    if v_id_proveedor is null then
+		insert into proveedores (nombre_proveedor) values (p_nombre_proveedor);        
+        select id_proveedor into v_id_proveedor
+		from proveedores where nombre_proveedor = p_nombre_proveedor;
+    end if;    
+    
+    select id_producto into v_id_producto from productos where nombre_producto = p_nombre_producto;
+    
+    if v_id_producto is null then
+		-- Si v_id_producto
+		insert into productos (nombre_producto, precio, stock_actual, id_proveedor) values
+        (p_nombre_producto, p_precio, p_stock, v_id_proveedor);
+        select concat_ws(" ", "Producto", p_nombre_producto, "añadido a la tabla");
+    else
+		update productos set precio = p_precio, stock_actual = stock_actual + p_stock
+        where id_producto = v_id_producto;
+        select concat_ws(" ", "Producto", p_nombre_producto, "actualizado");
+    end if;   
+    set p_stock_actualizado = (select stock_actual from productos where id_producto = v_id_producto);
+end $$
+delimiter ;
+
+-- Variable global
+set @stock_producto_actualizado = 0;
+
+call insertar_productos_2("MacBook", 2000, 5, "Apple", @stock_producto_actualizado);
+call insertar_productos_2("Teclado", 50, 2, "Logitech", @stock_producto_actualizado);
+call insertar_productos_2("Mouse", 20, 4, "Logitech", @stock_producto_actualizado);
+
+select @stock_producto_actualizado;
+
