@@ -24,7 +24,20 @@ apellido_cliente varchar(50) not null,
 id_pais int
 );
 
+alter table clientes modify column id_pais int unsigned default 1;
+
 insert into clientes (nombre_cliente,apellido_cliente) values ("Peter", "Parker"), ("Beyocé", "Pérez");
+
+insert into clientes (nombre_cliente,apellido_cliente, id_pais) values 
+("Michael", "Jackson", 2), ("Jean-Luc", "Piccard", 3), ("Luke", "Skywalker", 2),
+("Jules", "Verne", 3), ("Clark", "Kent", 2), ("Leia", "Skywalker", 2);
+
+-- Queremos saber, que cliente son del mismo pais y que codigo de pais es
+select concat_ws(" ", c1.nombre_cliente, c1.apellido_cliente) as Cliente1,
+concat(c2.nombre_cliente, " ", c2.apellido_cliente) as Cliente2, c1.id_pais
+from clientes c1, clientes c2
+where c1.id_pais = c2.id_pais and c1.id_cliente <> c2.id_cliente
+order by c1.id_pais;
 
 create table paises (
 id_pais int auto_increment primary key,
@@ -233,7 +246,41 @@ on c.id_cliente = f.id_cliente
 left join productos pr
 on f.id_producto = pr.id_producto
 left join proveedores p 
-on pr.id_proveedor = p.id_proveedor; 
+on pr.id_proveedor = p.id_proveedor 
+order by f.fecha_compra;
 
+-- Crear una vista con el select anterior
+drop view if exists datos_totales;
+
+create view datos_totales as 
+select c.nombre_cliente, c.apellido_cliente, pr.nombre_producto, pr.stock_actual, f.fecha_compra, p.nombre_proveedor from clientes c 
+left join facturas f
+on c.id_cliente = f.id_cliente
+left join productos pr
+on f.id_producto = pr.id_producto
+left join proveedores p 
+on pr.id_proveedor = p.id_proveedor 
+order by f.fecha_compra;
+
+
+select * from datos_totales;
+select nombre_cliente from datos_totales;
+
+-- Ver los usuarios actuales
+select * from mysql.user;
+
+-- Crear usuario para la base de datos tienda
+create user "admin_tienda"@localhost identified by "1234";
+create user "admin_tienda"@"%" identified by "1234";
+
+-- Conceder permisos en la base de datos tienda para hacer select en cualquier tabla
+grant select on tienda.* to "admin_tienda"@localhost;
+grant insert, update, delete on tienda.* to "admin_tienda"@localhost;
+grant all privileges on tienda.* to "admin_tienda"@localhost;
+
+-- Ver permisos de un usuario
+show grants for "admin_tienda"@localhost;
+
+show grants for "root"@localhost;
 
 
