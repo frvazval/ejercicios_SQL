@@ -14,7 +14,6 @@ delimiter $$
 create function clientes_pais (p_id_pais int)
 returns int
 deterministic 
-
 begin
 	declare v_cantidad_clientes int;
 	select count(id_pais) into v_cantidad_clientes
@@ -22,3 +21,4 @@ begin
     return v_cantidad_clientes;
 end $$
 delimiter ;
+
