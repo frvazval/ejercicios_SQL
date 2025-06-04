@@ -219,5 +219,7 @@ call insertar_productos_2("MacBook", 2000, 5, "Apple", @stock_producto_actualiza
 call insertar_productos_2("Teclado", 50, 2, "Logitech", @stock_producto_actualizado);
 call insertar_productos_2("Mouse", 20, 4, "Logitech", @stock_producto_actualizado);
 
+-- Mostrar el valor que tiene ahora la variable global
 select @stock_producto_actualizado;
+
 
