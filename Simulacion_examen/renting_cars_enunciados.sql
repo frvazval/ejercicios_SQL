@@ -72,7 +72,6 @@ from clientes c
 natural join alquileres a
 group by a.id_cliente;
 
-
 -- 8. Mostrar nombre de cliente, y el importe total gastado
 -- Ordenado por importe de más a menos
 
