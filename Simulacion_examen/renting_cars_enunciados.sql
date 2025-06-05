@@ -57,11 +57,20 @@ natural join alquileres a
 group by a.id_cliente;
 
 -- 7. Queremos que aparezcan estos mensajes:
--- -- si ha gastado más de 40000 -> "muy buen cliente"
--- -- si ha gastado más de 20000 -> "buen cliente"
--- -- si ha gastado más de 2000 -> "cliente medio"
--- -- si ha gastado igual o menos de 2000 -> "factura poco"
-
+-- -- si ha gastado más de 4000 -> "muy buen cliente"
+-- -- si ha gastado más de 2000 -> "buen cliente"
+-- -- si ha gastado más de 1000 -> "cliente medio"
+-- -- si ha gastado igual o menos de 1000 -> "factura poco"
+select concat_ws(" ", c.nombre, c.apellido) as cliente,
+case
+	when sum(a.facturacion) > 4000 then "muy buen cliente"
+    when sum(a.facturacion) > 2000 then "buen cliente"
+    when sum(a.facturacion) > 1000 then "cliente medio"
+    else "factura poco"    
+end as valoración
+from clientes c 
+natural join alquileres a
+group by a.id_cliente;
 
 
 -- 8. Mostrar nombre de cliente, y el importe total gastado
