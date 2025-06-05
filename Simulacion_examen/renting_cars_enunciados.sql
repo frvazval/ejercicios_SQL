@@ -87,6 +87,10 @@ group by a.id_cliente;
 
 
 -- 11. ¿Qué clientes no han alquilado nunca un vehículo?
+select c.nombre
+from clientes c 
+left join alquileres a on c.id_cliente = a.id_cliente
+where a.id_cliente is null;
 
 -- 12. Crea un SP (llamado cars_no_rent) para mostrar los modelos que no se han alquilado nunca.
 
