@@ -277,7 +277,10 @@ create user "admin_tienda"@"%" identified by "1234";
 grant select on tienda.* to "admin_tienda"@localhost;
 grant insert, update, delete on tienda.* to "admin_tienda"@localhost;
 grant all privileges on tienda.* to "admin_tienda"@localhost;
+grant all privileges on tienda.* to "admin_tienda"@"%";
+grant create routine, execute on tienda.* to "admin_tienda"@localhost  with grant option;
 
+grant all privileges on tienda.* to "admin_tienda"@localhost with grant option;
 -- Ver permisos de un usuario
 show grants for "admin_tienda"@localhost;
 
