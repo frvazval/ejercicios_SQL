@@ -19,17 +19,26 @@ WHERE precioDia = (SELECT MIN(precioDia) FROM modelos);
 
 -- 2. ¿Quien fue el primer cliente de la empresa?
 -- nombre, apellido, tipo, fecha
-select c.nombre, c.apellido, m.tipo, a.fecha_recogida from clientes c 
+select c.nombre, c.apellido, m.tipo, m.nombre_modelo, a.fecha_recogida from clientes c 
 inner join alquileres a 
 on a.id_cliente = c.id_cliente
 natural join modelos m
-order by a.fecha_recogida
-limit 1;
+where a.fecha_recogida = (SELECT MIN(fecha_recogida) FROM alquileres);
 
+
+
+
+-- Antes actualizamos la tabla de alquileres con la facturación correcta
+select (datediff(a.fecha_entrega, a.fecha_recogida) + 1) * m.precioDia, id_alquiler 
+from alquileres a
+natural join modelos m;
+
+update alquileres a natural join modelos m
+set facturacion = (datediff(a.fecha_entrega, a.fecha_recogida) + 1) * m.precioDia;
 
 -- 4. Facturación total de 2024 por clientes
 -- Nota: se cobra en el momento de la devolución
-select c.nombre, c.apellido, sum(a.facturacion) from 
+select sum(facturacion) from alquileres where year(fecha_entrega) = "2024";
 
 
 
@@ -37,11 +46,15 @@ select c.nombre, c.apellido, sum(a.facturacion) from
 
 -- 6. ¿Cuanto ha gastado cada cliente en cada alquiler? ¿Y cuanto ha gastado en total?
 # 6A. En cada alquiler
-
+select concat_ws(" ", c.nombre, c.apellido) as cliente, a.facturacion
+from clientes c 
+natural join alquileres a;
 
 # 6B. En total
-
-
+select concat_ws(" ", c.nombre, c.apellido) as cliente, sum(a.facturacion) as total
+from clientes c 
+natural join alquileres a
+group by a.id_cliente;
 
 -- 7. Queremos que aparezcan estos mensajes:
 -- -- si ha gastado más de 40000 -> "muy buen cliente"
